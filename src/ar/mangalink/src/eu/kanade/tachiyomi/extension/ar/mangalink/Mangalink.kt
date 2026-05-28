@@ -4,8 +4,10 @@ import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.preference.PreferenceScreen
 import eu.kanade.tachiyomi.multisrc.madara.Madara
+import eu.kanade.tachiyomi.network.interceptor.cloudflareKiller
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import keiyoushi.utils.getPreferencesLazy
+import okhttp3.OkHttpClient
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,6 +23,11 @@ class Mangalink :
     override val chapterUrlSuffix = ""
     override val useLoadMoreRequest = LoadMoreStrategy.Always
     override val baseUrl by lazy { getPrefBaseUrl() }
+
+    override val client: OkHttpClient = super.client
+        .newBuilder()
+        .addInterceptor(cloudflareKiller())
+        .build()
 
     private val preferences: SharedPreferences by getPreferencesLazy()
 
