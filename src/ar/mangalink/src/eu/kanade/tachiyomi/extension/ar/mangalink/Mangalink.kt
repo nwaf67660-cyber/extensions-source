@@ -3,8 +3,8 @@ package eu.kanade.tachiyomi.extension.ar.mangalink
 import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.preference.PreferenceScreen
+import eu.kanade.tachiyomi.lib.cloudflareinterceptor.CloudflareInterceptor
 import eu.kanade.tachiyomi.multisrc.madara.Madara
-import eu.kanade.tachiyomi.network.interceptor.cloudflareKiller
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import keiyoushi.utils.getPreferencesLazy
 import okhttp3.OkHttpClient
@@ -26,7 +26,7 @@ class Mangalink :
 
     override val client: OkHttpClient = super.client
         .newBuilder()
-        .addInterceptor(cloudflareKiller())
+        .addInterceptor(CloudflareInterceptor(super.client))
         .build()
 
     private val preferences: SharedPreferences by getPreferencesLazy()
@@ -55,6 +55,7 @@ class Mangalink :
         }
         screen.addPreference(baseUrlPref)
     }
+
     private fun getPrefBaseUrl(): String = preferences.getString(BASE_URL_PREF, super.baseUrl)!!
 
     init {
